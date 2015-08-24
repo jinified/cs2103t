@@ -195,18 +195,17 @@ public class CityConnect {
 			return String.format(MESSAGE_INVALID_FORMAT, userCommand);
 		}
 
-		String newStartLocation = parameters[PARAM_POSITION_START_LOCATION];
-		String newEndLocation = parameters[PARAM_POSITION_END_LOCATION];
+        Location locationNew = new Location(parameters[PARAM_POSITION_START_LOCATION],parameters[PARAM_POSITION_END_LOCATION]);
 
-		int position = getPositionOfExistingRoute(newStartLocation, newEndLocation);
+		int position = getPositionOfExistingRoute(locationNew);
 
 		if (position == NOT_FOUND) {
-			return String.format(MESSAGE_NO_ROUTE, newStartLocation,
-					newEndLocation);
+			return String.format(MESSAGE_NO_ROUTE, locationNew.startLocation,
+					locationNew.endLocation);
 		} 
 		else 
 		{
-			return String.format(MESSAGE_DISTANCE, newStartLocation, newEndLocation,
+			return String.format(MESSAGE_DISTANCE, locationNew.startLocation, locationNew.endLocation,
 					route[position][STORAGE_POSITION_DISTANCE]);
 		}
 
@@ -216,17 +215,15 @@ public class CityConnect {
 	 * @return Returns the position of the route represented by 
 	 *    newStartLocation and newEndLocation. Returns NOT_FOUND if not found.
 	 */
-	private static int  getPositionOfExistingRoute(String newStartLocation,
-			String newEndLocation) {
+	private static int  getPositionOfExistingRoute(Location locationNew) {
 		for (int i = 0; i < route.length; i++) {
 
-			String existing_start_location = route[i][STORAGE_POSITION_START_LOCATION];
-			String existing_end_location = route[i][STORAGE_POSITION_END_LOCATION];
+			Location location = new Location(route[i][STORAGE_POSITION_START_LOCATION],
+			    route[i][STORAGE_POSITION_END_LOCATION]);
 
-			if (existing_start_location == null) { //beginning of empty slots
+			if (location.startLocation == null) { //beginning of empty slots
 				return NOT_FOUND; 
-			} else if (sameRoute(existing_start_location, existing_end_location,
-					newStartLocation, newEndLocation)) { 
+			} else if (sameRoute(location,locationNew)) { 
 				return i;
 			}
 		}
@@ -250,31 +247,30 @@ public class CityConnect {
 			return String.format(MESSAGE_INVALID_FORMAT, userCommand);
 		}
 
-		String newStartLocation = parameters[PARAM_POSITION_START_LOCATION];
-		String newEndLocation = parameters[PARAM_POSITION_END_LOCATION];
+		Location locationNew = new Location(parameters[PARAM_POSITION_START_LOCATION],
+		    parameters[PARAM_POSITION_END_LOCATION]);
 		String distance = parameters[PARAM_POSITION_DISTANCE];
 
 		if (!isPositiveNonZeroInt(distance)){
 			return String.format(MESSAGE_INVALID_FORMAT, userCommand);
 		}
 
-		int slotPosition = location(newStartLocation, newEndLocation);
+		int slotPosition = location(locationNew);
 
 		if (slotPosition == SLOT_UNAVAILABLE){
 			return MESSAGE_NO_SPACE;
 		}
 
-		addRouteAtPosition(newStartLocation, newEndLocation, distance,
+		addRouteAtPosition(locationNew, distance,
 				slotPosition);
 
-		return String.format(MESSAGE_ADDED, newStartLocation, newEndLocation,
+		return String.format(MESSAGE_ADDED, locationNew.startLocation, locationNew.endLocation,
 				distance);
 	}
 
-	private static void addRouteAtPosition(String newStartLocation,
-			String newEndLocation, String distance, int entryPosition) {
-		route[entryPosition][STORAGE_POSITION_START_LOCATION] = newStartLocation;
-		route[entryPosition][STORAGE_POSITION_END_LOCATION] = newEndLocation;
+	private static void addRouteAtPosition(Location locationNew, String distance, int entryPosition) {
+		route[entryPosition][STORAGE_POSITION_START_LOCATION] = locationNew.startLocation;
+		route[entryPosition][STORAGE_POSITION_END_LOCATION] = locationNew.endLocation;
 		route[entryPosition][STORAGE_POSITION_DISTANCE] = distance;
 	}
 
@@ -283,18 +279,16 @@ public class CityConnect {
 	 *   newStartLocation and newEndLocation. Returns SLOT_UNAVAILABLE if
 	 *   no suitable slot is found.
 	 */
-	private static int location(String newStartLocation,
-			String newEndLocation) {
+	private static int location(Location locationNew) {
 		
 		for (int i = 0; i < route.length; i++) {
 
-			String existingStartLocation = route[i][STORAGE_POSITION_START_LOCATION];
-			String existingEndLocation = route[i][STORAGE_POSITION_END_LOCATION];
+			Location location = new Location(route[i][STORAGE_POSITION_START_LOCATION],
+			    route[i][STORAGE_POSITION_END_LOCATION]);
 
-			if (existingStartLocation == null) { // empty slot
+			if (location.startLocation == null) { // empty slot
 				return i;
-			} else if (sameRoute(existingStartLocation, existingEndLocation,
-					newStartLocation, newEndLocation)) {
+			} else if (sameRoute(location,locationNew)) {
 				return i;
 			}
 		}
@@ -304,18 +298,17 @@ public class CityConnect {
 	/**
 	 * This operation checks if two routes represents the same route.
 	 */
-	private static boolean sameRoute(String startLocation1,
-			String endLocation1, String startLocation2, String endLocation2) {
+	private static boolean sameRoute(Location location,Location locationNew) {
 
-		if ((startLocation1 == null) || (endLocation1 == null)
-				&& (startLocation2 == null) || (endLocation2 == null)){
+		if ((location.startLocation == null) || (location.endLocation == null)
+				&& (locationNew.startLocation == null) || (locationNew.endLocation == null)){
 			throw new Error("Route end points cannot be null");
 		}
 
-		return (startLocation1.equalsIgnoreCase(startLocation2) && endLocation1
-				.equalsIgnoreCase(endLocation2))
-				|| (startLocation1.equalsIgnoreCase(endLocation2) && endLocation1
-						.equalsIgnoreCase(startLocation2));
+		return (location.startLocation.equalsIgnoreCase(locationNew.startLocation) && location.endLocation
+				.equalsIgnoreCase(locationNew.endLocation))
+				|| (location.startLocation.equalsIgnoreCase(locationNew.endLocation) && location.endLocation
+						.equalsIgnoreCase(locationNew.startLocation));
 	}
 
 	private static boolean isPositiveNonZeroInt(String s) {
@@ -340,4 +333,17 @@ public class CityConnect {
 		String[] parameters = commandParametersString.trim().split("\\s+");
 		return parameters;
 	}
+}
+
+/**
+ * To store start location and end location as a unit
+ */
+class Location{
+    public final String startLocation;
+    public final String endLocation;
+
+    public Location(String startLocation,String endLocation){
+        this.startLocation = startLocation;
+        this.endLocation = endLocation;
+    }
 }
