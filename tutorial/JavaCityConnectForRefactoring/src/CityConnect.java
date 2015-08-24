@@ -300,16 +300,20 @@ public class CityConnect {
 	 */
 	private static boolean sameRoute(Location location,Location locationNew) {
 
-		if ((location.startLocation == null) || (location.endLocation == null)
-				&& (locationNew.startLocation == null) || (locationNew.endLocation == null)){
-			throw new Error("Route end points cannot be null");
-		}
 
+        checkEndPoints(location, locationNew);
 		return (location.startLocation.equalsIgnoreCase(locationNew.startLocation) && location.endLocation
 				.equalsIgnoreCase(locationNew.endLocation))
 				|| (location.startLocation.equalsIgnoreCase(locationNew.endLocation) && location.endLocation
 						.equalsIgnoreCase(locationNew.startLocation));
 	}
+
+    private static void checkEndPoints(Location location, Location locationNew){
+		if ((location.startLocation == null) || (location.endLocation == null)
+				&& (locationNew.startLocation == null) || (locationNew.endLocation == null)){
+			throw new Error("Route end points cannot be null");
+		}
+    }
 
 	private static boolean isPositiveNonZeroInt(String s) {
 		try {
