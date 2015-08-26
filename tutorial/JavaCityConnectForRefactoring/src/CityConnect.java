@@ -300,14 +300,19 @@ public class CityConnect {
 	 * This operation checks if two routes represents the same route.
 	 */
 	private static boolean sameRoute(Location location,Location locationNew) {
-
-
         checkEndPoints(location, locationNew);
-		return (location.startLocation.equalsIgnoreCase(locationNew.startLocation) && location.endLocation
-				.equalsIgnoreCase(locationNew.endLocation))
-				|| (location.startLocation.equalsIgnoreCase(locationNew.endLocation) && location.endLocation
-						.equalsIgnoreCase(locationNew.startLocation));
+		return hasSamePath(location, locationNew) || hasReversePath(location, locationNew);
 	}
+
+    private static boolean hasSamePath(Location location, Location locationNew){
+        return location.startLocation.equalsIgnoreCase(locationNew.startLocation) && location.endLocation
+				.equalsIgnoreCase(locationNew.endLocation);
+    }
+
+    private static boolean hasReversePath(Location location, Location locationNew){
+        return location.startLocation.equalsIgnoreCase(locationNew.endLocation) && location.endLocation
+						.equalsIgnoreCase(locationNew.startLocation);
+    }
 
     private static void checkEndPoints(Location location, Location locationNew){
 		if ((location.startLocation == null) || (location.endLocation == null)
