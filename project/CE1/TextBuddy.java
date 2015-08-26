@@ -46,6 +46,9 @@ public class TextBuddy{
         String fileName = args[0];
         String in = "";
         File output = new File(fileName);
+        if(!output.exists()){
+            output.createNewFile();
+        }
         BufferedReader fr = new BufferedReader(new FileReader(output.getAbsoluteFile()));
         readFromFile(fr,content);
         BufferedWriter bw = new BufferedWriter(new FileWriter(output.getAbsoluteFile()));
@@ -53,10 +56,10 @@ public class TextBuddy{
         //Read text from file 
         System.out.format("Welcome to TextBuddy. %s is ready for use\n\n",fileName);
         while(true){
-            //System.out.print("command: ");
+            System.out.print("command: ");
             in = br.readLine();
             String command = in.split(" ")[0];
-            //System.out.print("\n");
+            System.out.print("\n");
             if(command.equals("exit")){
                 StringBuilder sb = new StringBuilder();
                 for(String str:content){
