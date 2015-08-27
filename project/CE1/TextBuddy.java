@@ -1,98 +1,197 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Vector;
 
 /**
- * Assumptions: 
- * 1. User can enter duplicate text
- * 2. User will only enter valid command
+ * 
+ * @author TAN SOON JIN
+ *
  */
-
 public class TextBuddy{
    
+	private static final String MESSAGE_GENERIC = "\n%s\n\n";
+	private static final String MESSAGE_EMPTY_ARGUMENT = "Empty Argument";
+	private static final String MESSAGE_COMMAND = "command: ";
+	private static final String COMMAND_ADD = "add";
+	private static final String COMMAND_DELETE = "delete";
+	private static final String COMMAND_CLEAR = "clear";
+	private static final String COMMAND_DISPLAY = "display";
+	private static final String COMMAND_EXIT = "exit";
+	private static boolean canRun = true;
 
-    static void printContent(Vector<String> cont,String fileName){
-        if(cont.size() == 0){
-            System.out.printf("%s is empty\n\n",fileName);
+	private static Vector<String> fileContent = new Vector<String>();
+	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	private static String filePath;
+
+	public static void setupEnvironment(String[] args) throws IOException{
+		if (isEmptyArgument(args)){
+			System.out.println("No input text specified.");
+		} else {
+			filePath = args[0];
+			File userFile = new File(filePath);
+			userFile.createNewFile();				//Create new file if not exists
+			BufferedReader fileReader = new BufferedReader(
+                        new FileReader(filePath));
+			readFromFile(fileReader, fileContent);	//Read file content into Vector 
+        }
+	}
+
+    public static boolean isEmptyArgument(String[] args) {
+		return args.length == 0;
+	}
+
+    public static void readFromFile(BufferedReader fileReader, 
+        Vector<String> fileContent)throws IOException{
+            String line;
+            try{
+            	while((line = fileReader.readLine()) != null){
+            		fileContent.add(line); 
+            	}
+            } catch(IOException e){
+            	e.printStackTrace();
+            } finally{
+            	fileReader.close();
+            }
+    }
+
+    public static void writeOutput(String arg){
+    	System.out.print(String.format(MESSAGE_GENERIC,arg));
+    }
+
+	public static void printFileContent(Vector<String> fileContent,String filePath){
+        if (fileContent.size() == 0){
+        	writeOutput(String.format("%s is empty", filePath));
         } else {
-            System.out.println(getContent(cont));
+        	writeOutput(getContent(fileContent));
         }
     }
 
-    static String getContent(Vector<String> cont){
+    public static String getContent(Vector<String> fileContent){
         StringBuilder sb = new StringBuilder();
         int i = 1;
-        for(String str:cont){
-            String in = i++ + ". " + str + "\n";
+        for (String str:fileContent){
+            String in = String.format("%d. %s\n", i++, str);
             sb.append(in);
         }
-        return sb.toString();
+        String linesOfText = sb.toString();
+        return  linesOfText.substring(0, linesOfText.length()-1); //Remove last newline
     }
 
-    static void readFromFile(BufferedReader fr, Vector<String> cont)throws IOException{
-        String line;
-        try{
-            while((line = fr.readLine()) != null){
-                cont.add(line); 
-            }
-        } catch(IOException e){
-            e.printStackTrace();
-        } finally{
-            fr.close();
-        }
+    public static String[] parseUserInput(BufferedReader br)throws IOException{
+    	String userInput = br.readLine().trim();	//Sanitize user input 
+    	String command = userInput.split(" ")[0];	//Extract first word from user input
+    	String argument = getArgument(userInput);
+    	return new String[] {command,argument};
+    }
+    
+    public static String getArgument(String userInput){
+    	return userInput.split(" ").length == 1 ? null : extractArgument(userInput);
+    }
+
+    public static String extractArgument(String userInput){
+    	return userInput.substring(userInput.indexOf(" ")
+            + 1, userInput.length());
     }
 
     public static void main(String[] args) throws IOException{
-        Vector<String> content = new Vector<String>();
-        String fileName = args[0];
-        String in = "";
-        File output = new File(fileName);
-        if(!output.exists()){
-            output.createNewFile();
+    	setupEnvironment(args);
+        System.out.printf("Welcome to TextBuddy. %s is ready for use\n\n",filePath);
+        while (canRun){
+            System.out.print(MESSAGE_COMMAND);
+            String[] userInput = parseUserInput(br);
+            processCommand(userInput);
         }
-        BufferedReader fr = new BufferedReader(new FileReader(output.getAbsoluteFile()));
-        readFromFile(fr,content);
-        BufferedWriter bw = new BufferedWriter(new FileWriter(output.getAbsoluteFile()));
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        //Read text from file 
-        System.out.format("Welcome to TextBuddy. %s is ready for use\n\n",fileName);
-        while(true){
-            System.out.print("command: ");
-            in = br.readLine();
-            String command = in.split(" ")[0];
-            System.out.print("\n");
-            if(command.equals("exit")){
-                StringBuilder sb = new StringBuilder();
-                for(String str:content){
-                    sb.append(str+"\n");
-                }
-                bw.write(sb.toString());
-                break;
-            }
-            if(command.equals("display")){
-                printContent(content,fileName);
-            }
-            if(command.equals("clear")){
-                System.out.printf("all content deleted from %s\n\n",fileName);
-                content.clear();
-            }
-            else {
-                String parameter = in.substring(in.indexOf(" ")+1,in.length()).trim();
-                if(command.equals("add")){
-                    System.out.printf("added to %s: \"%s\"\n\n",fileName,parameter);
-                    content.add(parameter);
-                }
-                if(command.equals("delete")){
-                    int index = Integer.parseInt(parameter);
-                    try{
-                        System.out.printf("deleted from %s: \"%s\"\n\n",fileName,content.get(index-1));
-                        content.remove(index-1);
-                    } catch(IndexOutOfBoundsException e){
-                        System.err.println("Wrong index\n");
-                    }
-                }
-            }
-        }
-        bw.close(); //Close writer
     }
+
+	private static void processCommand(String[] userInput) throws IOException {
+		String command = userInput[0];
+		String argument = userInput[1];
+		switch (command){
+			case COMMAND_EXIT:
+				exitProgram();
+				break;
+				
+			case COMMAND_CLEAR:
+				clearFile(fileContent);
+				break;
+	
+			case COMMAND_ADD:
+				addToFile(argument);
+				break;
+				
+			case COMMAND_DELETE:
+				deleteFromFile(argument);
+				break;
+				
+			case COMMAND_DISPLAY:
+				displayFile();
+				break;
+				
+			default:
+				System.out.println("Unknown user input\n");
+				break;
+		}
+	}
+
+	private static void displayFile() {
+		printFileContent(fileContent, filePath);
+	}
+
+	private static void deleteFromFile(String argument) {
+		if (!isEmptyArgument(argument)){
+			int index = Integer.parseInt(argument);
+			try {
+				writeOutput(String.format("deleted from %s: \"%s\"",filePath,fileContent.get(index-1)));
+			} catch (IndexOutOfBoundsException e){
+				writeOutput("Illegal index input");
+			}
+            fileContent.remove(index-1);
+		} else {
+			writeOutput(MESSAGE_EMPTY_ARGUMENT);
+		}
+		
+	}
+
+	private static void addToFile(String argument) {
+		if (!isEmptyArgument(argument)){
+            writeOutput(String.format("added to %s: \"%s\"",filePath,argument));
+            fileContent.add(argument);
+		} else {
+			writeOutput(MESSAGE_EMPTY_ARGUMENT);
+		}
+	}
+
+	private static boolean isEmptyArgument(String argument) {
+		return argument == null;
+	}
+
+	private static void clearFile(Vector<String> fileContent) {
+        writeOutput(String.format("all content deleted from %s",filePath));
+        fileContent.clear();
+	}
+
+	private static void exitProgram()throws IOException{
+		StringBuilder sb = new StringBuilder();
+        BufferedWriter fileWriter = new BufferedWriter(
+            new FileWriter(filePath));
+
+		try {
+			for (String str : fileContent) {
+				sb.append(str + "\n");
+			}
+			fileWriter.write(sb.toString());
+		} catch (Exception e){
+			e.printStackTrace();
+		} finally {
+			fileWriter.close();
+		}
+
+		canRun = false;			//Terminate program
+	}
 
 }
