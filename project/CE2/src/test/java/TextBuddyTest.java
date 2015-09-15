@@ -68,5 +68,12 @@ public class TextBuddyTest {
     assertEquals(expected, input);
   }
   
+  @Test
+  public void sortFileContent_NormalFileContent_SortLines() {
+    String expected = "1. add nobody as friend\n\n2. say hi to my dog\n\n"
+        + "3. submit op1";
+    String input = TextBuddy.sortFileContent();
+    assertEquals(expected, input);
+  }
 
 }
