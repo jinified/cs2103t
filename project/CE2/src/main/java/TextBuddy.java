@@ -68,7 +68,7 @@ public class TextBuddy {
     	System.out.print(String.format(MESSAGE_GENERIC,arg));
     }
 
-	private static void printFileContent(Vector<String> fileContent,String filePath) {
+	public static void printFileContent(Vector<String> fileContent,String filePath) {
         if (fileContent.size() == 0) {
         	writeOutput(String.format("%s is empty", filePath));
         } else {
@@ -76,7 +76,7 @@ public class TextBuddy {
         }
     }
 
-    private static String getFileContent(Vector<String> fileContent) {
+    public static String getFileContent(Vector<String> fileContent) {
         StringBuilder sb = new StringBuilder();
         int i = 1;
 
@@ -88,7 +88,7 @@ public class TextBuddy {
         return  linesOfText.substring(0, linesOfText.length()-2); //Remove last newlines 
     }
 
-	private static String getCommand(String userInput) {
+	static String getCommand(String userInput) {
 		return userInput.split(" ")[0];
 	}
 

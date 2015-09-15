@@ -3,9 +3,13 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.Vector;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -13,33 +17,56 @@ public class TextBuddyTest {
 
   private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-  private static final String MESSAGE_GENERIC = "\n%s\n\n";
-  private static final String MESSAGE_EMPTY_ARGUMENT = "Empty Argument";
-  private static final String MESSAGE_INVALID_COMMAND = "Invalid Command";
-  private static final String MESSAGE_COMMAND = "command: ";
-  private static final String COMMAND_ADD = "add";
-  private static final String COMMAND_DELETE = "delete";
-  private static final String COMMAND_CLEAR = "clear";
-  private static final String COMMAND_DISPLAY = "display";
-  private static final String COMMAND_EXIT = "exit";
+  private static Vector<String> fileContent;
+
+  @BeforeClass
+  public static void setResources() {
+    fileContent = new Vector<String>(Arrays.asList(
+        new String[] {"submit op1", "add nobody as friend", 
+                      "say hi to my dog"}));
+  }
 
   @Before
-  public void setUpStreams() {
+  public void setUp() {
     System.setOut(new PrintStream(outContent));
     System.setErr(new PrintStream(errContent));
   }
 
   @After
-  public void cleanUpStreams() {
+  public void tearDown() {
     System.setOut(null);
     System.setErr(null);
   }
 
   @Test
-  public void testInvalidCommand() throws IOException {
+  public void processCommand_InvalidCommand_PrintInvalid() throws IOException {
     TextBuddy.processCommand("kill me");
-    assertEquals(String.format(MESSAGE_GENERIC, MESSAGE_INVALID_COMMAND), 
-        outContent.toString());
+    assertEquals("\nInvalid Command\n\n", outContent.toString());
   }
+  
+  @Test
+  public void printFileContent_EmptyArgument_PrintEmpty() {
+    Vector<String> fileContent = new Vector<String>();
+    String filePath = "/test";
+    TextBuddy.printFileContent(fileContent, filePath);
+    assertEquals("\n/test is empty\n\n", outContent.toString());
+  }
+
+
+  @Test
+  public void getFileContent_RegularContent_ReturnStrings() {
+    String expected = "1. submit op1\n\n2. add nobody as friend\n\n"
+        + "3. say hi to my dog";
+    String formattedFileContent = TextBuddy.getFileContent(fileContent);
+    assertEquals(expected, formattedFileContent);
+  }
+  
+  @Test
+  public void getCommand_NormalCommand_ReturnCommand() {
+    String input = TextBuddy.getCommand("add this is something new");
+    String expected = "add";
+    assertEquals(expected, input);
+  }
+  
 
 }
