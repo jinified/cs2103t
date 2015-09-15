@@ -72,7 +72,8 @@ public class TextBuddyTest {
   public void sortFileContent_NormalFileContent_SortLines() {
     String expected = "1. add nobody as friend\n\n2. say hi to my dog\n\n"
         + "3. submit op1";
-    String input = TextBuddy.sortFileContent();
+    TextBuddy.sortFileContent();
+    String input = TextBuddy.getFileContent(fileContent);
     assertEquals(expected, input);
   }
 
