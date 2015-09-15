@@ -26,7 +26,7 @@ public class TextBuddy {
 	private static final String COMMAND_DISPLAY = "display";
 	private static final String COMMAND_EXIT = "exit";
 
-	private static boolean canRun = true;							//Termination flag 
+	private static boolean isRunning = true;							//Termination flag 
 	private static Vector<String> fileContent = new Vector<String>();
 	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private static String filePath;
@@ -42,6 +42,7 @@ public class TextBuddy {
 			BufferedReader fileReader = new BufferedReader(
                         new FileReader(filePath));
 			readFromFile(fileReader, fileContent);	//Read file content into Vector 
+			System.out.printf("Welcome to TextBuddy. %s is ready for use\n\n",filePath);
         }
 	}
 
@@ -98,15 +99,17 @@ public class TextBuddy {
 	}
 
 
-    public static void main(String[] args) throws IOException{
-    	setupEnvironment(args);
-        System.out.printf("Welcome to TextBuddy. %s is ready for use\n\n",filePath);
+  public static void main(String[] args) throws IOException {
+    setupEnvironment(args);
+    runInputLoop();
+  }
 
-        while (canRun){
-            showToUser(MESSAGE_COMMAND);
-            String userInput = br.readLine().trim();		//Sanitize user input 
-            processCommand(userInput);
-        }
+    public static void runInputLoop() throws IOException {
+      while (isRunning){
+          showToUser(MESSAGE_COMMAND);
+          String userInput = br.readLine().trim();		//Sanitize user input 
+          processCommand(userInput);
+      }
     }
 
 	private static void showToUser(String messageCommand) {
@@ -190,7 +193,7 @@ public class TextBuddy {
 
 	private static void exitProgram()throws IOException {
 		writeToFile(filePath);
-		canRun = false;			//Terminate program
+		isRunning = false;			//Terminate program
 	}
 
 	private static void writeToFile(String filePath)throws IOException {
