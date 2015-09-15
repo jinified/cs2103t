@@ -70,10 +70,12 @@ public class TextBuddyTest {
   
   @Test
   public void sortFileContent_NormalFileContent_SortLines() {
-    String expected = "1. add nobody as friend\n\n2. say hi to my dog\n\n"
-        + "3. submit op1";
-    TextBuddy.sortFileContent();
-    String input = TextBuddy.getFileContent(fileContent);
+    Vector<String> testContent = new Vector<String>(Arrays.asList(
+        new String[]{"add maybe", "say hello", "kick me"}));
+    String expected = "1. add maybe\n\n2. kick me\n\n"
+        + "3. say hello";
+    TextBuddy.sortFileContent(testContent);
+    String input = TextBuddy.getFileContent(testContent);
     assertEquals(expected, input);
   }
 
