@@ -78,5 +78,11 @@ public class TextBuddyTest {
     String input = TextBuddy.getFileContent(testContent);
     assertEquals(expected, input);
   }
+  
+  @Test
+  public void searchFileContent_NormalInput_DisplayMatched() {
+    String testInput = "OP1";
+    String expected = TextBuddy.searchFileContent(testInput);
+  }
 
 }
