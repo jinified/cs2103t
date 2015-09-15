@@ -236,4 +236,9 @@ public class TextBuddy {
     Collections.sort(fileContent);
   }
 
+  public static String searchFileContent(String testInput) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }

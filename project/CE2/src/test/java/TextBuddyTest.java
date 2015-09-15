@@ -82,7 +82,9 @@ public class TextBuddyTest {
   @Test
   public void searchFileContent_NormalInput_DisplayMatched() {
     String testInput = "OP1";
-    String expected = TextBuddy.searchFileContent(testInput);
+    String result = TextBuddy.searchFileContent(testInput);
+    String expected = "1. submit OP1 slides\n\n2. research on OP1 topic";
+    assertEquals(expected, result);
   }
 
 }
