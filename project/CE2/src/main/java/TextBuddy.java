@@ -232,13 +232,22 @@ public class TextBuddy {
 	}
 
   public static void sortFileContent(Vector<String> fileContent) {
-    // TODO Auto-generated method stub
     Collections.sort(fileContent);
   }
 
-  public static String searchFileContent(String testInput) {
-    // TODO Auto-generated method stub
-    return null;
+  public static String searchFileContent(String keyword, Vector<String> testContent) {
+    // Empty vector to be populated with matched String 
+    Vector<String> result = new Vector<String>();
+    for (String str : testContent) {
+      if (hasKeyword(str, keyword)) {   //Check if line contains keyword
+        result.add(str);                //Add to line to result
+      }
+    }
+    return getFileContent(result);
+  }
+  
+  private static boolean hasKeyword(String source, String keyword) {
+    return source.contains(keyword);
   }
 
 }
