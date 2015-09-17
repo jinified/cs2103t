@@ -2,6 +2,7 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Vector;
@@ -56,9 +57,11 @@ public class TextBuddyTest {
 
   @Test
   public void getFileContent_RegularContent_ReturnStrings() {
+    Vector<String> testContent = new Vector<String>(Arrays.asList(
+        new String[]{"submit op1", "add nobody as friend", "say hi to my dog"}));
     String expected = "1. submit op1\n\n2. add nobody as friend\n\n"
         + "3. say hi to my dog";
-    String formattedFileContent = TextBuddy.getFileContent(fileContent);
+    String formattedFileContent = TextBuddy.getFileContent(testContent);
     assertEquals(expected, formattedFileContent);
   }
   
@@ -92,8 +95,9 @@ public class TextBuddyTest {
   }
   
   @Test
-  public void processCommand_SearchCommand_DisplaySuccess(){
-    fail();
+  public void processCommand_SortCommand_DisplaySuccess(){
+    TextBuddy.sortFileContent(fileContent);
+    assertEquals("\nSorted successfully\n\n", outContent.toString());
   }
 
 }

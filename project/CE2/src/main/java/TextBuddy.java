@@ -27,6 +27,7 @@ public class TextBuddy {
 	private static final String COMMAND_CLEAR = "clear";
 	private static final String COMMAND_DISPLAY = "display";
 	private static final String COMMAND_EXIT = "exit";
+    private static final String COMMAND_SORT = "sort";
 
 	private static boolean isRunning = true;							//Termination flag 
 	private static Vector<String> fileContent = new Vector<String>();
@@ -147,6 +148,10 @@ public class TextBuddy {
                 displayFile();
                 break;
 
+        	case COMMAND_SORT:
+                displayFile();
+                break;
+
         	default:
                 writeOutput(MESSAGE_INVALID_COMMAND);
                 break;
@@ -233,6 +238,7 @@ public class TextBuddy {
 
   public static void sortFileContent(Vector<String> fileContent) {
     Collections.sort(fileContent);
+    writeOutput("Sorted successfully");
   }
 
   public static String searchFileContent(String keyword, Vector<String> testContent) {
