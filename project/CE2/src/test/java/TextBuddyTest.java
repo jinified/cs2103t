@@ -89,7 +89,8 @@ public class TextBuddyTest {
         new String[]{"add maybe", "say hello", "kick me", 
                      "submit OP1 slides", "research on OP1 topic"}));
     String testInput = "OP1";
-    String result = TextBuddy.searchFileContent(testInput, testContent);
+    String result = TextBuddy.getFileContent(
+        TextBuddy.searchFileContent(testInput, testContent));
     String expected = "1. submit OP1 slides\n\n2. research on OP1 topic";
     assertEquals(expected, result);
   }
@@ -103,8 +104,8 @@ public class TextBuddyTest {
   @Test
   public void searchFile_MissingKeyword_DisplayNoMatched() {
     String userInput = "search void";
-    String expected = "\nNo matched found\n\n";
-    String result = TextBuddy.searchFile(userInput);
-    assertEquals(expected, result);
+    String expected = "\nNo match found\n\n";
+    TextBuddy.searchFile(userInput);
+    assertEquals(expected, outContent.toString());
   }
 }

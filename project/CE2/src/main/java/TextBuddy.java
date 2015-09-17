@@ -29,6 +29,7 @@ public class TextBuddy {
 	private static final String COMMAND_EXIT = "exit";
     private static final String COMMAND_SORT = "sort";
     private static final String COMMAND_SEARCH = "search";
+    private static final String MESSAGE_NO_MATCH = "No match found";
 
 	private static boolean isRunning = true;							//Termination flag 
 	private static Vector<String> fileContent = new Vector<String>();
@@ -246,7 +247,13 @@ public class TextBuddy {
     writeOutput("Sorted successfully");
   }
 
-  public static String searchFileContent(String keyword, Vector<String> testContent) {
+  /**
+   * 
+   * @param keyword
+   * @param testContent
+   * @return vector of strings
+   */
+  public static Vector<String> searchFileContent(String keyword, Vector<String> testContent) {
     // Empty vector to be populated with matched String 
     Vector<String> result = new Vector<String>();
     for (String str : testContent) {
@@ -254,16 +261,28 @@ public class TextBuddy {
         result.add(str);                //Add to line to result
       }
     }
-    return getFileContent(result);
+    return result;
   }
   
   private static boolean hasKeyword(String source, String keyword) {
     return source.contains(keyword);
   }
 
-  public static String searchFile(String userInput) {
-    // TODO Auto-generated method stub
-    return null;
+  public static void searchFile(String userInput) {
+    if (!isEmptyArgument(userInput)) {
+      String keyword = getArgument(userInput);
+      Vector<String> result = searchFileContent(keyword, fileContent);
+
+      /*Check if result is empty, prints no match*/
+      if (result.isEmpty()) {
+        writeOutput(MESSAGE_NO_MATCH);
+      } else {
+        printFileContent(result, filePath);
+      }
+
+    } else {
+      writeOutput(MESSAGE_EMPTY_ARGUMENT);
+    }
   }
 
 }
