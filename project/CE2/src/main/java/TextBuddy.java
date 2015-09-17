@@ -28,6 +28,7 @@ public class TextBuddy {
 	private static final String COMMAND_DISPLAY = "display";
 	private static final String COMMAND_EXIT = "exit";
     private static final String COMMAND_SORT = "sort";
+    private static final String COMMAND_SEARCH = "search";
 
 	private static boolean isRunning = true;							//Termination flag 
 	private static Vector<String> fileContent = new Vector<String>();
@@ -149,7 +150,11 @@ public class TextBuddy {
                 break;
 
         	case COMMAND_SORT:
-                displayFile();
+                sortFileContent(fileContent);
+                break;
+
+        	case COMMAND_SEARCH:
+                searchFile(userInput);
                 break;
 
         	default:
@@ -254,6 +259,11 @@ public class TextBuddy {
   
   private static boolean hasKeyword(String source, String keyword) {
     return source.contains(keyword);
+  }
+
+  public static String searchFile(String userInput) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

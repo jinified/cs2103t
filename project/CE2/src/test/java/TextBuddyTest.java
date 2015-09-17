@@ -95,9 +95,16 @@ public class TextBuddyTest {
   }
   
   @Test
-  public void processCommand_SortCommand_DisplaySuccess(){
-    TextBuddy.sortFileContent(fileContent);
+  public void processCommand_SortCommand_DisplaySuccess() throws IOException{
+    TextBuddy.processCommand("sort");
     assertEquals("\nSorted successfully\n\n", outContent.toString());
   }
-
+  
+  @Test
+  public void searchFile_MissingKeyword_DisplayNoMatched() {
+    String userInput = "search void";
+    String expected = "\nNo matched found\n\n";
+    String result = TextBuddy.searchFile(userInput);
+    assertEquals(expected, result);
+  }
 }
