@@ -32,6 +32,7 @@ public class TextBuddyTest {
     System.setErr(new PrintStream(errContent));
   }
 
+
   @After
   public void tearDown() {
     System.setOut(null);
@@ -88,6 +89,11 @@ public class TextBuddyTest {
     String result = TextBuddy.searchFileContent(testInput, testContent);
     String expected = "1. submit OP1 slides\n\n2. research on OP1 topic";
     assertEquals(expected, result);
+  }
+  
+  @Test
+  public void processCommand_SearchCommand_DisplaySuccess(){
+    fail();
   }
 
 }
